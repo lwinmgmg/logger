@@ -11,9 +11,11 @@ func main(){
     logger.Close()
 }
 ```
+Notice : don't forget to close the logger.<br>As it is async logger, you can miss the last messages if you don't close the logger
 
 # Options
-You can modify Handlers, Level, Pattern, Time Format using logger.NewLogging(...) function.
+You can modify Handlers, Level, Pattern, Pending Count, Time Format using logger.NewLogging(...) function.<br>
+Pending Count equal zero means sync logger.
 ```
 // This format and pattern is for default logger
 const (
