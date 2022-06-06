@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewLogging(t *testing.T) {
-	logger := logger.NewLogging(logger.INFO, func() string {return ""}, logger.DEFAULT_PATTERN, logger.DEFAULT_TFORMAT, &logger.ConsoleWriter{})
+	logger := logger.NewLogging(logger.INFO, func() string { return "" }, 1000, logger.DEFAULT_PATTERN, logger.DEFAULT_TFORMAT, &logger.ConsoleWriter{})
 	logger.Debug("Debug")
 	logger.Info("Info")
 	logger.Warning("Warning")

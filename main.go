@@ -28,9 +28,13 @@ type Logging struct {
 	Pattern         string
 	TFormat         string
 	Other           func() string
+	PendingCount    int
 }
 
-func NewLogging(level LogLevel, other func() string, pattern, tFormat string, handlers ...LoggerWriter) *Logging {
+func NewLogging(level LogLevel, other func() string, pendingCount int, pattern, tFormat string, handlers ...LoggerWriter) *Logging {
+	if pendingCount < 0 {
+		pendingCount = 1000
+	}
 	lgr := &Logging{
 		Handlers:        handlers,
 		HandlerChannels: make([]chan Message, 0, len(handlers)),
@@ -39,9 +43,10 @@ func NewLogging(level LogLevel, other func() string, pattern, tFormat string, ha
 		Pattern:         pattern,
 		TFormat:         tFormat,
 		Other:           other,
+		PendingCount:    pendingCount,
 	}
 	for i, wr := range lgr.Handlers {
-		lgr.HandlerChannels = append(lgr.HandlerChannels, make(chan Message, 100))
+		lgr.HandlerChannels = append(lgr.HandlerChannels, make(chan Message, lgr.PendingCount))
 		go HandleFunc(lgr.HandlerChannels[i], lgr.Confirm, lgr.Done, wr, lgr.Pattern, lgr.TFormat)
 	}
 	return lgr
@@ -61,8 +66,9 @@ func DefaultLogging(level LogLevel, handlers ...LoggerWriter) *Logging {
 	lgr.TFormat = DEFAULT_TFORMAT
 	lgr.Level = level
 	lgr.Other = func() string { return "" }
+	lgr.PendingCount = 1000
 	for i, wr := range lgr.Handlers {
-		lgr.HandlerChannels = append(lgr.HandlerChannels, make(chan Message, 100))
+		lgr.HandlerChannels = append(lgr.HandlerChannels, make(chan Message, lgr.PendingCount))
 		go HandleFunc(lgr.HandlerChannels[i], lgr.Confirm, lgr.Done, wr, lgr.Pattern, lgr.TFormat)
 	}
 	return lgr
