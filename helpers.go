@@ -42,7 +42,7 @@ var (
 )
 
 type LoggerWriter interface {
-	Write(string) (int, error)
+	Write([]byte) (int, error)
 	Close() error
 }
 
@@ -53,12 +53,13 @@ func NewConsoleWriter() *ConsoleWriter {
 	return &ConsoleWriter{}
 }
 
-func (coslWr *ConsoleWriter) Write(mesg string) (int, error) {
-	length := len(mesg)
+func (coslWr *ConsoleWriter) Write(mesg []byte) (int, error) {
+	newMesg := string(mesg)
+	length := len(newMesg)
 	for str, fun := range ColorFuncMap {
-		mesg = strings.Replace(mesg, str, fun(str), -1)
+		newMesg = strings.Replace(newMesg, str, fun(str), -1)
 	}
-	_, err := fmt.Print(mesg)
+	_, err := fmt.Print(newMesg)
 	return length, err
 }
 
@@ -152,13 +153,13 @@ func (fileWr *FileWriter) rotateFile() error {
 	return nil
 }
 
-func (fileWr *FileWriter) Write(mesg string) (int, error) {
+func (fileWr *FileWriter) Write(mesg []byte) (int, error) {
 	if fileWr.MaxSize > 0 && fileWr.currentSize >= fileWr.MaxSize {
 		if err := fileWr.rotateFile(); err != nil {
 			return 0, err
 		}
 	}
-	wrote, err := fileWr.WriterCloser.Write([]byte(mesg))
+	wrote, err := fileWr.WriterCloser.Write(mesg)
 	fileWr.currentSize += int64(wrote)
 	return wrote, err
 }

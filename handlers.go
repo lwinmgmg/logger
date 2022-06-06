@@ -11,7 +11,7 @@ func HandleFunc(ch <-chan Message, confirm chan<- struct{}, done <-chan struct{}
 			if !ok {
 				stopSig = true
 			}
-			writer.Write(mesg.Format(pattern, tFormat))
+			writer.Write([]byte(mesg.Format(pattern, tFormat)))
 		case <-done:
 			if len(ch) == 0 {
 				stopSig = true
