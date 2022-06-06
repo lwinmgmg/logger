@@ -43,7 +43,7 @@ var (
 
 type LoggerWriter interface {
 	Write(string) (int, error)
-	Close(string) error
+	Close() error
 }
 
 type ConsoleWriter struct {
@@ -62,7 +62,7 @@ func (coslWr *ConsoleWriter) Write(mesg string) (int, error) {
 	return length, err
 }
 
-func (coslWr *ConsoleWriter) Close(mesg string) error {
+func (coslWr *ConsoleWriter) Close() error {
 	return nil
 }
 

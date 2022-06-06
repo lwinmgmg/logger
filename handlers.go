@@ -18,4 +18,5 @@ func HandleFunc(ch <-chan Message, confirm chan<- struct{}, done <-chan struct{}
 			}
 		}
 	}
+	writer.Close()
 }
