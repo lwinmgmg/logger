@@ -76,8 +76,9 @@ func DefaultLogging(level LogLevel, handlers ...LoggerWriter) *Logging {
 
 func (lgr *Logging) write(level LogLevel, mesg string, args ...any) {
 	if lgr.Level <= level {
+		mesgObj := NewMessage(level, lgr.Other(), mesg, args...)
 		for _, ch := range lgr.HandlerChannels {
-			ch <- NewMessage(level, lgr.Other(), mesg, args...)
+			ch <- mesgObj
 		}
 	}
 }
